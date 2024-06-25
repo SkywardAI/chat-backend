@@ -9,6 +9,7 @@ CHAT_COMTEXT = "Melbourne is the capital city of the Australian state of Victori
 DEFAULT_ENCODER = "sentence-transformers/all-MiniLM-L6-v2"
 CROSS_ENDOCDER = 'cross-encoder/ms-marco-MiniLM-L-6-v2'
 DEFAULT_MODEL = "microsoft/GODEL-v1_1-base-seq2seq"
+DEFAULT_TEXT_MODEL = "openai-community/gpt2"
 DEFAUTL_SUMMERIZE_MODEL="Falconsai/text_summarization"
 DEFAULT_MODEL_PATH = "/models/"
 # CONVERSATION
