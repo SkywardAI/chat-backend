@@ -9,9 +9,9 @@ ROOT_DIR: pathlib.Path = pathlib.Path(__file__).parent.parent.parent.parent.pare
 
 
 class BackendBaseSettings(BaseSettings):
-    TITLE: str = "Kirin API"
-    VERSION: str = "0.1.7"
-    TIMEZONE: str = "UTC"
+    TITLE: str =   decouple.config("TITLE", cast=str)
+    VERSION: str = decouple.config("BACKEND_SERVER_VERSION", cast=str)
+    TIMEZONE: str = decouple.config("TIMEZONE", cast=str)
     DESCRIPTION: str | None = None
     DEBUG: bool = False
 
@@ -26,6 +26,7 @@ class BackendBaseSettings(BaseSettings):
 
     MILVUS_HOST: str = decouple.config("MILVUS_HOST", cast=str)  # type: ignore
     MILVUS_PORT: int = decouple.config("MILVUS_PORT", cast=int)  # type: ignore
+    MILVUS_VERSION: int = decouple.config("MILVUS_VERSION", cast=str)  # type: ignore
     DB_POSTGRES_HOST: str = decouple.config("POSTGRES_HOST", cast=str)  # type: ignore
     DB_MAX_POOL_CON: int = decouple.config("DB_MAX_POOL_CON", cast=int)  # type: ignore
     DB_POSTGRES_NAME: str = decouple.config("POSTGRES_DB", cast=str)  # type: ignore

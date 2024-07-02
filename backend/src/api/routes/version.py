@@ -15,6 +15,7 @@
 
 
 import fastapi
+from src.models.schemas.version import ServiceVersionResponse
 from src.config.manager import settings
 
 router = fastapi.APIRouter(prefix="/version", tags=["version"])
@@ -26,4 +27,8 @@ router = fastapi.APIRouter(prefix="/version", tags=["version"])
     status_code=fastapi.status.HTTP_200_OK,
 )
 async def get_version() -> dict:
-    return {"version": settings.VERSION}
+    return ServiceVersionResponse(
+        backend_version=settings.VERSION,
+        milvus_version=settings.MILVUS_VERSION,
+        llamacpp_version=settings.INFERENCE_ENG_VERSION
+  )
