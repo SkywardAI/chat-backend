@@ -7,7 +7,7 @@ from fastapi import BackgroundTasks
 
 from src.api.dependencies.repository import get_repository
 from src.config.settings.const import UPLOAD_FILE_PATH
-from src.models.schemas.file import FileInResponse, FileStatusInResponse
+from src.models.schemas.file import FileInResponse
 from src.repository.crud.file import UploadedFileCRUDRepository
 from src.utilities.exceptions.database import EntityAlreadyExists
 
@@ -74,20 +74,4 @@ async def get_dataset(
         # datasets_list.append(db_dataset.name)
     return datasets_list
 
-@router.get(
-    path="/{id}",
-    name="file:check upload status",
-    response_model=FileStatusInResponse,
-    status_code=fastapi.status.HTTP_200_OK,
-)
-async def check_status(
-    id: int,
-) -> FileStatusInResponse:
-
-    # TODO check process status of training
-    # choices = [0, 1, -1]
-    # 0 for in process
-    # 1 for complete successfully
-    # -1 for error
-    return FileStatusInResponse(status=1)
 

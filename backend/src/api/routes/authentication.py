@@ -1,9 +1,10 @@
 import fastapi
-
+from fastapi import Request
 from src.api.dependencies.repository import get_repository
 from src.models.schemas.account import AccountInCreate, AccountInLogin, AccountInResponse, AccountWithToken
+from src.config.settings.const import ANONYMOUS_USER,ANONYMOUS_PASS
 from src.repository.crud.account import AccountCRUDRepository
-from src.securities.authorizations.jwt import jwt_generator
+from src.securities.authorizations.jwt import jwt_generator, jwt_required
 from src.utilities.exceptions.database import EntityAlreadyExists
 from src.utilities.exceptions.http.exc_400 import (
     http_exc_400_credentials_bad_signin_request,
@@ -58,6 +59,10 @@ async def signin(
     account_login: AccountInLogin,
     account_repo: AccountCRUDRepository = fastapi.Depends(get_repository(repo_type=AccountCRUDRepository)),
 ) -> AccountInResponse:
+
+    if account_login.username == ANONYMOUS_USER:
+        raise await http_exc_400_credentials_bad_signin_request()
+    
     try:
         db_account = await account_repo.read_user_by_password_authentication(account_login=account_login)
 
@@ -79,3 +84,30 @@ async def signin(
             updated_at=db_account.updated_at,
         ),
     )
+
+@router.get(
+    path="/token",
+    name="authentication: token for anonymous user",
+    response_model=dict,
+    status_code=fastapi.status.HTTP_200_OK,
+)
+async def get_chathistory(
+    account_repo: AccountCRUDRepository = fastapi.Depends(get_repository(repo_type=AccountCRUDRepository))
+) -> dict:
+    anonymous_user = AccountInLogin( username=ANONYMOUS_USER, password=ANONYMOUS_PASS)
+    db_account = await account_repo.read_user_by_password_authentication(account_login=anonymous_user)
+    access_token = jwt_generator.generate_access_token(account=db_account)
+
+    return {"token": access_token}
+
+
+@router.get(
+    path="/test",
+    name="authentication: test for jwt",
+    response_model=dict,
+    status_code=fastapi.status.HTTP_200_OK,
+)
+@jwt_required
+async def get_chathistory(request: Request) -> dict:
+    jwt_account = request.state.jwt_account
+    return jwt_account

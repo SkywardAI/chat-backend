@@ -13,8 +13,3 @@ class TrainFileIn(BaseSchemaModel):
 class TrainFileInResponse(BaseSchemaModel):
     trainID: int | None = None
     msg : str
-
-
-class TrainStatusInResponse(BaseSchemaModel):
-    status: int | None = None
-    msg : str

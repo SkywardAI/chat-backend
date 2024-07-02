@@ -7,7 +7,3 @@ class UploadedFile(BaseSchemaModel):
 
 class FileInResponse(BaseSchemaModel):
     fileID: int
-
-
-class FileStatusInResponse(BaseSchemaModel):
-    status: int

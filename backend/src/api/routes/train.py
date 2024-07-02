@@ -3,7 +3,7 @@ from src.repository.crud.dataset_db import DataSetCRUDRepository
 import fastapi
 import threading
 from src.api.dependencies.repository import get_rag_repository, get_repository
-from src.models.schemas.train import TrainFileIn, TrainFileInResponse, TrainStatusInResponse
+from src.models.schemas.train import TrainFileIn, TrainFileInResponse
 from src.repository.crud.ai_model import AiModelCRUDRepository
 from src.repository.crud.file import UploadedFileCRUDRepository
 from src.repository.rag.chat import RAGChatModelRepository
@@ -17,7 +17,7 @@ router = fastapi.APIRouter(prefix="/train", tags=["Save"])
     response_model=TrainFileInResponse,
     status_code=fastapi.status.HTTP_201_CREATED,
 )
-async def train(
+async def save(
     train_in_msg: TrainFileIn,
     aimodel_repo: AiModelCRUDRepository = fastapi.Depends(get_repository(repo_type=AiModelCRUDRepository)),
     file_repo: UploadedFileCRUDRepository = fastapi.Depends(get_repository(repo_type=UploadedFileCRUDRepository)),
@@ -37,7 +37,6 @@ async def train(
         # Else, load dataset
         db_dataset=await dataset_repo.get_dataset_by_name(train_in_msg.dataSet)
         if not db_dataset:
-        # await rag_chat_repo.load_data_set(train_in_msg) 
             dataload_thread = threading.Thread(target=rag_chat_repo.load_data_set,args=(train_in_msg,) )
             dataload_thread.daemon = True
             dataload_thread.start()
@@ -46,20 +45,3 @@ async def train(
     return TrainFileInResponse(
         msg="successful",
     )
-
-
-@router.get(
-    path="/{id}",
-    name="train:check status",
-    response_model=TrainStatusInResponse,
-    status_code=fastapi.status.HTTP_200_OK,
-)
-async def check_status(
-    id: int,
-) -> TrainStatusInResponse:
-
-    # choices = [0, 1, -1]
-    # 0 for in process
-    # 1 for complete successfully
-    # -1 for error
-    return TrainStatusInResponse(status=1)
